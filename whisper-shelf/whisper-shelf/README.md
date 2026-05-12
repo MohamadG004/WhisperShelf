@@ -195,9 +195,3 @@ The rain intensity and particle count can be tweaked in:
 - [ ] Custom ambient soundscapes (fireplace, café, thunderstorm)
 - [ ] Plugin system for data sources (Open Library API, Google Books)
 - [ ] Export reading list as PDF
-
----
-
-## 📄 License
-
-MIT — use, modify, and share freely.
