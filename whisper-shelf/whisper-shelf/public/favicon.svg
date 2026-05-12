@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Background -->
+  <rect width="32" height="32" rx="6" fill="#071510"/>
+
+  <!-- Books on shelf -->
+  <!-- Book 1 - dark blue -->
+  <rect x="4" y="8" width="5" height="14" rx="1" fill="#1a3a5c"/>
+  <!-- Book 2 - forest green (tall) -->
+  <rect x="10" y="6" width="4" height="16" rx="1" fill="#1e4a2a"/>
+  <!-- Book 3 - amber brown -->
+  <rect x="15" y="10" width="3" height="12" rx="1" fill="#5c3a1a"/>
+  <!-- Book 4 - muted red -->
+  <rect x="19" y="7" width="5" height="15" rx="1" fill="#3a1a1a"/>
+  <!-- Book 5 - olive -->
+  <rect x="25" y="9" width="3" height="13" rx="1" fill="#2a3a1a"/>
+
+  <!-- Shelf plank -->
+  <rect x="3" y="22" width="26" height="3" rx="0.5" fill="#4a3018"/>
+  <!-- Shelf highlight -->
+  <rect x="3" y="22" width="26" height="0.8" fill="rgba(255,220,160,0.15)"/>
+
+  <!-- Warm glow -->
+  <circle cx="16" cy="14" r="8" fill="rgba(200,140,30,0.06)"/>
+</svg>

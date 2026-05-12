@@ -1,0 +1,147 @@
+/* ============================================================
+   WhisperShelf — Global Styles
+   CSS custom properties, keyframes, resets, and custom scrollbar.
+   ============================================================ */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── CSS Custom Properties ─────────────────────────────────── */
+:root {
+  /* Forest palette */
+  --color-forest-deep:   #040e07;
+  --color-forest-dark:   #071810;
+  --color-forest-mid:    #0e2a18;
+  --color-forest-light:  #1a4028;
+
+  /* Warm amber / candlelight */
+  --color-amber-deep:    #3d1f00;
+  --color-amber-mid:     #8b5a00;
+  --color-amber-warm:    #d4950a;
+  --color-amber-bright:  #f0b830;
+
+  /* Shelf wood */
+  --color-wood-dark:     #2a1a0c;
+  --color-wood-mid:      #4a3018;
+  --color-wood-light:    #6b4a25;
+
+  /* Text */
+  --color-text-primary:  rgba(235, 215, 180, 0.95);
+  --color-text-secondary: rgba(175, 200, 170, 0.75);
+  --color-text-muted:    rgba(120, 155, 115, 0.55);
+
+  /* Font families */
+  --font-display: "Playfair Display", Georgia, serif;
+  --font-body:    "Crimson Text", Georgia, serif;
+  --font-accent:  "IM Fell English", Georgia, serif;
+}
+
+/* ── Base Reset ─────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body, #root {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--color-forest-deep);
+}
+
+/* ── Custom Scrollbar ────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(80, 120, 60, 0.3);
+  border-radius: 2px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 150, 80, 0.5);
+}
+
+/* ── Text Selection ──────────────────────────────────────────── */
+::selection {
+  background: rgba(100, 160, 70, 0.25);
+  color: rgba(230, 220, 190, 0.95);
+}
+
+/* ── Keyframes ───────────────────────────────────────────────── */
+
+/* Dust particle drift */
+@keyframes dustFloat {
+  0%, 100% {
+    transform: translateY(0px) translateX(0px);
+    opacity: var(--base-opacity, 0.15);
+  }
+  25% {
+    transform: translateY(-18px) translateX(var(--dust-drift, 12px));
+    opacity: calc(var(--base-opacity, 0.15) * 1.4);
+  }
+  50% {
+    transform: translateY(-8px) translateX(calc(var(--dust-drift, 12px) * 0.6));
+    opacity: var(--base-opacity, 0.15);
+  }
+  75% {
+    transform: translateY(-24px) translateX(calc(var(--dust-drift, 12px) * 0.3));
+    opacity: calc(var(--base-opacity, 0.15) * 0.7);
+  }
+}
+
+/* Fog / mist drift */
+@keyframes fogDrift {
+  0%   { transform: translateX(-4%) scaleX(1.08); opacity: 0.4; }
+  50%  { transform: translateX(4%) scaleX(1.0);  opacity: 0.2; }
+  100% { transform: translateX(-4%) scaleX(1.08); opacity: 0.4; }
+}
+
+/* Gentle candle flicker */
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.55; }
+  30%       { opacity: 0.80; }
+  60%       { opacity: 0.45; }
+  80%       { opacity: 0.70; }
+}
+
+/* Slow atmospheric float */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-10px); }
+}
+
+/* ── Utility Classes ─────────────────────────────────────────── */
+.font-playfair { font-family: var(--font-display); }
+.font-crimson  { font-family: var(--font-body); }
+.font-fell     { font-family: var(--font-accent); }
+
+/* Smooth image rendering */
+img {
+  image-rendering: auto;
+  display: block;
+}
+
+/* Disable tap highlight on mobile */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Focus visible ring (accessibility) */
+:focus-visible {
+  outline: 2px solid rgba(120, 180, 80, 0.5);
+  outline-offset: 2px;
+}
+
+/* ── Glass panel base style ──────────────────────────────────── */
+.glass-panel {
+  background: rgba(10, 22, 12, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+}
