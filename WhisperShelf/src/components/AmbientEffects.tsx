@@ -1,119 +1,135 @@
 // ============================================================
-// WhisperShelf — AmbientEffects Component
-// Orchestrates all atmospheric background effects:
-// - Animated forest/rain background layers
-// - Rain canvas overlay
-// - Floating dust particles
-// - Fog/mist drifting layer
-// - Warm candlelight vignette
+// Cozy Shelf — AmbientEffects Component
+// Falling autumn leaves and warm background glow
 // ============================================================
 
-import { RainCanvas } from "./RainCanvas";
-import { DustParticles } from "./DustParticles";
+import { useMemo } from "react";
+import { Leaf } from "../types";
+
+const LEAF_COLORS = [
+  "#E8920A", // amber
+  "#D4600A", // burnt orange
+  "#C42B2B", // red
+  "#E8C040", // yellow
+  "#F0A030", // warm orange
+  "#A85020", // brown
+];
+
+const LEAF_COUNT = 18;
+
+function LeafSVG({ color, shape }: { color: string; shape: Leaf["shape"] }) {
+  if (shape === "maple") {
+    return (
+      <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path
+          d="M9 2 L11 6 L15 5 L13 8 L17 9 L13 10 L15 13 L11 12 L9 16 L7 12 L3 13 L5 10 L1 9 L5 8 L3 5 L7 6 Z"
+          fill={color}
+          stroke="rgba(0,0,0,0.4)"
+          strokeWidth="1"
+        />
+      </svg>
+    );
+  }
+  if (shape === "round") {
+    return (
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <ellipse cx="8" cy="8" rx="7" ry="6" fill={color} stroke="rgba(0,0,0,0.4)" strokeWidth="1" />
+        <line x1="8" y1="2" x2="8" y2="14" stroke="rgba(0,0,0,0.25)" strokeWidth="1" />
+      </svg>
+    );
+  }
+  // oval
+  return (
+    <svg width="14" height="20" viewBox="0 0 14 20" fill="none">
+      <ellipse cx="7" cy="10" rx="5" ry="9" fill={color} stroke="rgba(0,0,0,0.4)" strokeWidth="1" />
+      <line x1="7" y1="1" x2="7" y2="19" stroke="rgba(0,0,0,0.25)" strokeWidth="1" />
+    </svg>
+  );
+}
 
 export function AmbientEffects() {
+  const leaves = useMemo<Leaf[]>(() => {
+    const shapes: Leaf["shape"][] = ["maple", "round", "oval"];
+    return Array.from({ length: LEAF_COUNT }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      size: 0.7 + Math.random() * 0.8,
+      delay: Math.random() * 12,
+      duration: 7 + Math.random() * 8,
+      color: LEAF_COLORS[Math.floor(Math.random() * LEAF_COLORS.length)],
+      shape: shapes[Math.floor(Math.random() * shapes.length)],
+    }));
+  }, []);
+
   return (
-    <>
-      {/* ── Layer 1: Deep forest background gradient ── */}
+    <div className="absolute inset-0 pointer-events-none overflow-hidden" style={{ zIndex: 0 }}>
+      {/* Warm ambient glow — bottom */}
       <div
-        className="fixed inset-0 z-0"
         style={{
-          background: `
-            radial-gradient(ellipse at 20% 50%, rgba(10, 40, 15, 0.9) 0%, transparent 60%),
-            radial-gradient(ellipse at 80% 20%, rgba(5, 25, 10, 0.95) 0%, transparent 50%),
-            radial-gradient(ellipse at 50% 100%, rgba(15, 8, 2, 0.8) 0%, transparent 50%),
-            linear-gradient(180deg, #04100a 0%, #071a0e 30%, #091a0c 60%, #0d1208 100%)
-          `,
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: "40%",
+          background: "radial-gradient(ellipse at 50% 100%, rgba(180,80,10,0.18) 0%, transparent 70%)",
         }}
       />
 
-      {/* ── Layer 2: Tree silhouettes (left & right edges) ── */}
+      {/* Warm glow — top right corner (lantern-like) */}
       <div
-        className="fixed inset-0 z-0 pointer-events-none"
         style={{
-          background: `
-            radial-gradient(ellipse at -10% 30%, rgba(4, 14, 6, 0.95) 0%, transparent 35%),
-            radial-gradient(ellipse at 110% 25%, rgba(4, 14, 6, 0.95) 0%, transparent 35%)
-          `,
+          position: "absolute",
+          top: -80,
+          right: -40,
+          width: 300,
+          height: 300,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(245,196,24,0.12) 0%, transparent 70%)",
+          animation: "glowPulse 4s ease-in-out infinite",
         }}
       />
 
-      {/* ── Layer 3: Warm cabin window light (centre glow) ── */}
+      {/* Warm glow — top left */}
       <div
-        className="fixed inset-0 z-0 pointer-events-none"
         style={{
-          background: `
-            radial-gradient(ellipse at 50% 45%, rgba(90, 55, 10, 0.12) 0%, transparent 55%)
-          `,
+          position: "absolute",
+          top: -60,
+          left: -40,
+          width: 250,
+          height: 250,
+          borderRadius: "50%",
+          background: "radial-gradient(circle, rgba(232,146,10,0.10) 0%, transparent 70%)",
+          animation: "glowPulse 5s ease-in-out infinite 1s",
         }}
       />
 
-      {/* ── Layer 4: Animated fog/mist strips ── */}
-      <div
-        className="fixed inset-0 z-0 pointer-events-none overflow-hidden"
-        style={{ opacity: 0.4 }}
-      >
-        {/* Low ground fog */}
+      {/* Falling leaves */}
+      {leaves.map((leaf) => (
         <div
-          className="absolute bottom-0 left-0 right-0"
+          key={leaf.id}
           style={{
-            height: "25%",
-            background:
-              "linear-gradient(to top, rgba(20, 50, 25, 0.35) 0%, transparent 100%)",
-            animation: "fogDrift 25s ease-in-out infinite",
+            position: "absolute",
+            top: -30,
+            left: `${leaf.x}%`,
+            transform: `scale(${leaf.size})`,
+            animation: `leafFall ${leaf.duration}s ease-in ${leaf.delay}s infinite`,
+            opacity: 0,
           }}
-        />
-        {/* Mid-level wisps */}
-        <div
-          className="absolute"
-          style={{
-            top: "35%",
-            left: "-10%",
-            right: "-10%",
-            height: "18%",
-            background:
-              "radial-gradient(ellipse at 50% 50%, rgba(15, 40, 18, 0.2) 0%, transparent 70%)",
-            animation: "fogDrift 35s ease-in-out infinite reverse",
-            animationDelay: "-12s",
-          }}
-        />
-      </div>
+        >
+          <LeafSVG color={leaf.color} shape={leaf.shape} />
+        </div>
+      ))}
 
-      {/* ── Layer 5: Rain canvas (drawn in JS) ── */}
-      <RainCanvas />
-
-      {/* ── Layer 6: Floating dust motes ── */}
-      <DustParticles />
-
-      {/* ── Layer 7: Warm vignette overlay ── */}
+      {/* Subtle vignette */}
       <div
-        className="fixed inset-0 z-20 pointer-events-none"
         style={{
-          background: `
-            radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(4, 10, 4, 0.55) 100%)
-          `,
-        }}
-      />
-
-      {/* ── Layer 8: Top fade for depth ── */}
-      <div
-        className="fixed top-0 left-0 right-0 z-20 pointer-events-none"
-        style={{
-          height: "120px",
+          position: "absolute",
+          inset: 0,
           background:
-            "linear-gradient(to bottom, rgba(3, 8, 4, 0.85) 0%, transparent 100%)",
+            "radial-gradient(ellipse at center, transparent 40%, rgba(0,0,0,0.5) 100%)",
+          pointerEvents: "none",
         }}
       />
-
-      {/* ── Layer 9: Bottom fade ── */}
-      <div
-        className="fixed bottom-0 left-0 right-0 z-20 pointer-events-none"
-        style={{
-          height: "80px",
-          background:
-            "linear-gradient(to top, rgba(3, 8, 4, 0.9) 0%, transparent 100%)",
-        }}
-      />
-    </>
+    </div>
   );
 }
