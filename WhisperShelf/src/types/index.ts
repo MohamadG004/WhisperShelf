@@ -1,37 +1,32 @@
 // ============================================================
-// WhisperShelf — Type Definitions
+// Cozy Shelf — Type Definitions
 // ============================================================
 
-/** Represents a single book in the shelf */
+/** Represents a single book in the shop or shelf */
 export interface Book {
-  /** Unique identifier */
   id: string;
-  /** Full title of the book */
   title: string;
-  /** Author name(s) */
   author: string;
-  /** Short description / synopsis */
   description: string;
-  /** Genre/category label */
   category: BookCategory;
-  /** Rating out of 5 */
   rating: number;
-  /** Descriptive tags */
   tags: string[];
-  /** Spine background color (CSS color string) */
+  /** Book cover primary color */
   color: string;
-  /** Accent / text color on spine */
+  /** Book accent / text color */
   accentColor: string;
-  /** Spine width in pixels (20–60) */
+  /** Spine width (used for shelf view) */
   thickness: number;
-  /** Book height in pixels (170–260) */
+  /** Book height */
   height: number;
-  /** Publication year */
   year: number;
-  /** Optional: page count */
   pages?: number;
-  /** Optional: personal reading status */
-  status?: ReadingStatus;
+  /** Shop buy price in gold coins */
+  price: number;
+  /** Simple emoji icon for the cover */
+  coverEmoji: string;
+  /** Cover pattern type */
+  coverPattern: "dots" | "stripes" | "diamonds" | "waves" | "stars" | "grid";
 }
 
 /** Available book categories */
@@ -46,19 +41,14 @@ export type BookCategory =
   | "History"
   | "Nature";
 
-/** Reading status for a book */
-export type ReadingStatus = "unread" | "reading" | "read" | "loved";
-
-/** State for the bookshelf application */
-export interface ShelfState {
-  /** Currently selected/open book */
-  selectedBook: Book | null;
-  /** Active category filter */
-  activeCategory: BookCategory;
-  /** Current search query */
-  searchQuery: string;
-  /** Whether ambient audio is playing */
-  audioEnabled: boolean;
+/** The player's game state */
+export interface GameState {
+  coins: number;
+  ownedBookIds: Set<string>;
+  /** Books the player is offering for sale */
+  forSaleBookIds: Set<string>;
+  /** Wishlist */
+  wishlistIds: Set<string>;
 }
 
 /** Props passed to individual Book components */
@@ -66,31 +56,30 @@ export interface BookProps {
   book: Book;
   isSelected: boolean;
   onClick: (book: Book) => void;
+  mode: "shop" | "myshelf";
+  isOwned: boolean;
 }
 
 /** Props for the BookDetail panel */
 export interface BookDetailProps {
   book: Book;
   onClose: () => void;
+  mode: "shop" | "myshelf";
+  isOwned: boolean;
+  canAfford: boolean;
+  onBuy: (book: Book) => void;
+  onSell: (book: Book) => void;
+  isWishlisted: boolean;
+  onWishlist: (book: Book) => void;
 }
 
-/** A single rain drop for canvas rendering */
-export interface RainDrop {
-  x: number;
-  y: number;
-  length: number;
-  speed: number;
-  opacity: number;
-  width: number;
-}
-
-/** A dust particle for ambient effect */
-export interface DustParticle {
+/** A falling leaf particle */
+export interface Leaf {
   id: number;
   x: number;
-  y: number;
   size: number;
-  opacity: number;
-  speed: number;
-  drift: number;
+  delay: number;
+  duration: number;
+  color: string;
+  shape: "maple" | "round" | "oval";
 }
