@@ -1,6 +1,6 @@
 /* ============================================================
-   WhisperShelf — Global Styles
-   CSS custom properties, keyframes, resets, and custom scrollbar.
+   Cozy Shelf — Global Styles
+   Cartoony library game aesthetic
    ============================================================ */
 
 @tailwind base;
@@ -9,32 +9,40 @@
 
 /* ── CSS Custom Properties ─────────────────────────────────── */
 :root {
-  /* Forest palette */
-  --color-forest-deep:   #040e07;
-  --color-forest-dark:   #071810;
-  --color-forest-mid:    #0e2a18;
-  --color-forest-light:  #1a4028;
+  /* Cozy autumn palette */
+  --bg:            #1E0D05;
+  --bg-dark:       #150905;
+  --panel-bg:      #3D2210;
+  --panel-border:  #5C3820;
+  --wood-dark:     #3D1E08;
+  --wood-mid:      #6B3A14;
+  --wood-light:    #A0622A;
+  --wood-top:      #C07A38;
 
-  /* Warm amber / candlelight */
-  --color-amber-deep:    #3d1f00;
-  --color-amber-mid:     #8b5a00;
-  --color-amber-warm:    #d4950a;
-  --color-amber-bright:  #f0b830;
-
-  /* Shelf wood */
-  --color-wood-dark:     #2a1a0c;
-  --color-wood-mid:      #4a3018;
-  --color-wood-light:    #6b4a25;
+  /* Accent colors */
+  --amber:         #E8920A;
+  --gold:          #F5C418;
+  --gold-dark:     #C8A010;
+  --red:           #C42B2B;
+  --red-light:     #E03030;
+  --cream:         #F5E8C8;
+  --cream-dark:    #E0CFA0;
+  --green:         #4A8A30;
+  --green-light:   #6AAA50;
 
   /* Text */
-  --color-text-primary:  rgba(235, 215, 180, 0.95);
-  --color-text-secondary: rgba(175, 200, 170, 0.75);
-  --color-text-muted:    rgba(120, 155, 115, 0.55);
+  --text-dark:     #2C1A0E;
+  --text-cream:    #F5E8C8;
+  --text-muted:    #8B6A40;
+
+  /* Cartoon borders */
+  --outline:       #2C1A0E;
+  --outline-width: 3px;
 
   /* Font families */
-  --font-display: "Playfair Display", Georgia, serif;
-  --font-body:    "Crimson Text", Georgia, serif;
-  --font-accent:  "IM Fell English", Georgia, serif;
+  --font-display: "Fredoka One", Nunito, sans-serif;
+  --font-body:    "Nunito", sans-serif;
+  --font-accent:  "Caveat", cursive;
 }
 
 /* ── Base Reset ─────────────────────────────────────────────── */
@@ -48,100 +56,168 @@ html, body, #root {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background: var(--color-forest-deep);
+  background: var(--bg);
 }
 
 /* ── Custom Scrollbar ────────────────────────────────────────── */
-::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(80, 120, 60, 0.3);
-  border-radius: 2px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(100, 150, 80, 0.5);
-}
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); border-radius: 3px; }
+::-webkit-scrollbar-thumb { background: var(--wood-mid); border-radius: 3px; border: 1px solid var(--outline); }
+::-webkit-scrollbar-thumb:hover { background: var(--wood-light); }
 
 /* ── Text Selection ──────────────────────────────────────────── */
 ::selection {
-  background: rgba(100, 160, 70, 0.25);
-  color: rgba(230, 220, 190, 0.95);
+  background: rgba(245, 196, 24, 0.35);
+  color: var(--text-dark);
 }
 
-/* ── Keyframes ───────────────────────────────────────────────── */
+/* ── Font utility classes ────────────────────────────────────── */
+.font-fredoka { font-family: var(--font-display); }
+.font-nunito  { font-family: var(--font-body); }
+.font-caveat  { font-family: var(--font-accent); }
 
-/* Dust particle drift */
-@keyframes dustFloat {
-  0%, 100% {
-    transform: translateY(0px) translateX(0px);
-    opacity: var(--base-opacity, 0.15);
-  }
-  25% {
-    transform: translateY(-18px) translateX(var(--dust-drift, 12px));
-    opacity: calc(var(--base-opacity, 0.15) * 1.4);
-  }
-  50% {
-    transform: translateY(-8px) translateX(calc(var(--dust-drift, 12px) * 0.6));
-    opacity: var(--base-opacity, 0.15);
-  }
-  75% {
-    transform: translateY(-24px) translateX(calc(var(--dust-drift, 12px) * 0.3));
-    opacity: calc(var(--base-opacity, 0.15) * 0.7);
-  }
-}
-
-/* Fog / mist drift */
-@keyframes fogDrift {
-  0%   { transform: translateX(-4%) scaleX(1.08); opacity: 0.4; }
-  50%  { transform: translateX(4%) scaleX(1.0);  opacity: 0.2; }
-  100% { transform: translateX(-4%) scaleX(1.08); opacity: 0.4; }
-}
-
-/* Gentle candle flicker */
-@keyframes glowPulse {
-  0%, 100% { opacity: 0.55; }
-  30%       { opacity: 0.80; }
-  60%       { opacity: 0.45; }
-  80%       { opacity: 0.70; }
-}
-
-/* Slow atmospheric float */
-@keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50%       { transform: translateY(-10px); }
-}
-
-/* ── Utility Classes ─────────────────────────────────────────── */
+/* Keep legacy names working */
 .font-playfair { font-family: var(--font-display); }
 .font-crimson  { font-family: var(--font-body); }
 .font-fell     { font-family: var(--font-accent); }
 
-/* Smooth image rendering */
-img {
-  image-rendering: auto;
-  display: block;
+/* ── Cartoon card base ───────────────────────────────────────── */
+.cartoon-card {
+  border: var(--outline-width) solid var(--outline);
+  border-radius: 12px;
+  box-shadow: 4px 4px 0px var(--outline);
 }
 
-/* Disable tap highlight on mobile */
-button, a {
-  -webkit-tap-highlight-color: transparent;
+.cartoon-card-sm {
+  border: 2px solid var(--outline);
+  border-radius: 8px;
+  box-shadow: 3px 3px 0px var(--outline);
 }
 
-/* Focus visible ring (accessibility) */
+.cartoon-btn {
+  border: 3px solid var(--outline);
+  border-radius: 10px;
+  box-shadow: 3px 3px 0px var(--outline);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  font-family: var(--font-display);
+  font-weight: 400;
+}
+
+.cartoon-btn:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 4px 4px 0px var(--outline);
+}
+
+.cartoon-btn:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0px var(--outline);
+}
+
+.cartoon-btn-sm {
+  border: 2px solid var(--outline);
+  border-radius: 8px;
+  box-shadow: 2px 2px 0px var(--outline);
+  cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  font-family: var(--font-display);
+}
+
+.cartoon-btn-sm:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0px var(--outline);
+}
+
+.cartoon-btn-sm:active {
+  transform: translate(1px, 1px);
+  box-shadow: 0px 0px 0px var(--outline);
+}
+
+/* ── Keyframes ───────────────────────────────────────────────── */
+@keyframes leafFall {
+  0%   { transform: translateY(-20px) translateX(0) rotate(0deg); opacity: 0.9; }
+  25%  { transform: translateY(25vh)  translateX(30px) rotate(90deg); }
+  50%  { transform: translateY(50vh)  translateX(-10px) rotate(180deg); }
+  75%  { transform: translateY(75vh)  translateX(25px) rotate(270deg); }
+  100% { transform: translateY(105vh) translateX(0) rotate(360deg); opacity: 0.2; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+
+@keyframes glowPulse {
+  0%, 100% { opacity: 0.7; }
+  50%       { opacity: 1; }
+}
+
+@keyframes popIn {
+  0%   { transform: scale(0.6); opacity: 0; }
+  70%  { transform: scale(1.08); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes coinBounce {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50%       { transform: translateY(-6px) scale(1.1); }
+}
+
+@keyframes shopBell {
+  0%   { transform: rotate(0deg); }
+  15%  { transform: rotate(-20deg); }
+  30%  { transform: rotate(20deg); }
+  45%  { transform: rotate(-12deg); }
+  60%  { transform: rotate(12deg); }
+  75%  { transform: rotate(-5deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* ── Smooth image rendering ──────────────────────────────────── */
+img { image-rendering: auto; display: block; }
+
+button, a { -webkit-tap-highlight-color: transparent; }
+
 :focus-visible {
-  outline: 2px solid rgba(120, 180, 80, 0.5);
+  outline: 3px solid var(--gold);
   outline-offset: 2px;
 }
 
-/* ── Glass panel base style ──────────────────────────────────── */
-.glass-panel {
-  background: rgba(10, 22, 12, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+/* ── Panel / glass styles ────────────────────────────────────── */
+.panel-bg {
+  background: var(--panel-bg);
+  border: 3px solid var(--panel-border);
+}
+
+.wood-panel {
+  background: linear-gradient(135deg, var(--wood-mid) 0%, var(--wood-dark) 100%);
+  border: 3px solid var(--outline);
+}
+
+/* ── Dashed outline (for trade slots) ───────────────────────── */
+.dash-border {
+  border: 3px dashed var(--panel-border);
+  border-radius: 12px;
+}
+
+/* ── Price tag wobble ───────────────────────────────────────── */
+@keyframes tagWobble {
+  0%, 100% { transform: rotate(-3deg); }
+  50%       { transform: rotate(3deg); }
+}
+
+.price-tag {
+  animation: tagWobble 2s ease-in-out infinite;
+}
+
+/* ── Toast notification ─────────────────────────────────────── */
+@keyframes toastSlide {
+  0%   { transform: translateY(30px); opacity: 0; }
+  15%  { transform: translateY(0); opacity: 1; }
+  85%  { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(30px); opacity: 0; }
+}
+
+.toast {
+  animation: toastSlide 2.5s ease-in-out forwards;
 }
