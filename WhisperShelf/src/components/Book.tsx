@@ -1,175 +1,261 @@
 // ============================================================
-// WhisperShelf — Book Component
-// Renders a single book spine on the shelf.
-// Handles hover (tilt + lift) and click (pull-forward) animations.
-// Book spine includes title text rotated vertically.
+// Cozy Shelf — Book Component
+// Front-facing cartoon book card with price tag
 // ============================================================
 
 import { motion } from "framer-motion";
 import { BookProps } from "../types";
+import { getSellPrice } from "../utils/helpers";
 
-/** Easing for book interactions */
-const SPRING = { type: "spring", stiffness: 380, damping: 28 };
+const SPRING = { type: "spring", stiffness: 340, damping: 24 };
 
-export function Book({ book, isSelected, onClick }: BookProps) {
+/** SVG pattern overlay for book cover */
+function CoverPattern({
+  pattern,
+  color,
+}: {
+  pattern: string;
+  color: string;
+}) {
+  const id = `pat-${pattern}-${color.replace("#", "")}`;
+  switch (pattern) {
+    case "dots":
+      return (
+        <svg className="absolute inset-0 w-full h-full opacity-20" style={{ pointerEvents: "none" }}>
+          <defs>
+            <pattern id={id} x="0" y="0" width="12" height="12" patternUnits="userSpaceOnUse">
+              <circle cx="6" cy="6" r="2.5" fill="white" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#${id})`} />
+        </svg>
+      );
+    case "stripes":
+      return (
+        <svg className="absolute inset-0 w-full h-full opacity-15" style={{ pointerEvents: "none" }}>
+          <defs>
+            <pattern id={id} x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+              <line x1="0" y1="0" x2="0" y2="8" stroke="white" strokeWidth="3" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#${id})`} />
+        </svg>
+      );
+    case "diamonds":
+      return (
+        <svg className="absolute inset-0 w-full h-full opacity-18" style={{ pointerEvents: "none" }}>
+          <defs>
+            <pattern id={id} x="0" y="0" width="14" height="14" patternUnits="userSpaceOnUse">
+              <polygon points="7,1 13,7 7,13 1,7" fill="none" stroke="white" strokeWidth="1.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#${id})`} />
+        </svg>
+      );
+    case "waves":
+      return (
+        <svg className="absolute inset-0 w-full h-full opacity-15" style={{ pointerEvents: "none" }}>
+          <defs>
+            <pattern id={id} x="0" y="0" width="20" height="10" patternUnits="userSpaceOnUse">
+              <path d="M0 5 Q5 0 10 5 Q15 10 20 5" fill="none" stroke="white" strokeWidth="1.5" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#${id})`} />
+        </svg>
+      );
+    case "grid":
+      return (
+        <svg className="absolute inset-0 w-full h-full opacity-12" style={{ pointerEvents: "none" }}>
+          <defs>
+            <pattern id={id} x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+              <path d="M0 0 L16 0 M0 0 L0 16" fill="none" stroke="white" strokeWidth="1" />
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#${id})`} />
+        </svg>
+      );
+    case "stars":
+    default:
+      return (
+        <svg className="absolute inset-0 w-full h-full opacity-18" style={{ pointerEvents: "none" }}>
+          <defs>
+            <pattern id={id} x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
+              <text x="5" y="13" fontSize="10" fill="white">★</text>
+            </pattern>
+          </defs>
+          <rect width="100%" height="100%" fill={`url(#${id})`} />
+        </svg>
+      );
+  }
+}
+
+export function Book({ book, isSelected, onClick, mode, isOwned }: BookProps) {
+  const sellPrice = getSellPrice(book);
+  const displayPrice = mode === "myshelf" && isOwned ? sellPrice : book.price;
+  const cardWidth = 90;
+  const cardHeight = 130;
+
   return (
     <motion.div
-      className="relative cursor-pointer flex-shrink-0 select-none"
-      style={{ width: book.thickness, height: book.height }}
-      // Layout animation when books reflow after filter
+      className="relative cursor-pointer select-none flex-shrink-0"
+      style={{ width: cardWidth, height: cardHeight + 24 }}
       layout
       layoutId={`book-${book.id}`}
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 20, scale: 0.9 }}
       animate={{
         opacity: 1,
-        y: isSelected ? -22 : 0,
+        y: isSelected ? -10 : 0,
         scale: isSelected ? 1.06 : 1,
-        rotateY: isSelected ? -5 : 0,
-        filter: isSelected
-          ? "drop-shadow(0 20px 30px rgba(0,0,0,0.8)) brightness(1.15)"
-          : "drop-shadow(2px 4px 8px rgba(0,0,0,0.6))",
       }}
-      exit={{ opacity: 0, y: 20 }}
+      exit={{ opacity: 0, y: 20, scale: 0.8 }}
       transition={SPRING}
       whileHover={{
-        y: -14,
+        y: -8,
         scale: 1.04,
-        rotateY: -4,
-        filter:
-          "drop-shadow(4px 12px 20px rgba(0,0,0,0.75)) brightness(1.1)",
-        transition: { ...SPRING, duration: 0.2 },
+        transition: { ...SPRING, duration: 0.15 },
       }}
       onClick={() => onClick(book)}
       title={`${book.title} — ${book.author}`}
     >
-      {/* ── Book spine body ── */}
+      {/* ── Book card body ── */}
       <div
-        className="w-full h-full relative overflow-hidden"
+        className="relative overflow-hidden"
         style={{
-          background: `linear-gradient(
-            to right,
-            rgba(0,0,0,0.5) 0%,
-            ${book.color} 8%,
-            ${book.color} 88%,
-            rgba(0,0,0,0.4) 100%
-          )`,
-          borderRadius: "2px 3px 3px 2px",
-          boxShadow: `
-            inset 1px 0 2px rgba(255,255,255,0.08),
-            inset -1px 0 3px rgba(0,0,0,0.5),
-            2px 0 6px rgba(0,0,0,0.4)
-          `,
+          width: cardWidth,
+          height: cardHeight,
+          background: `linear-gradient(145deg, ${book.color}ee 0%, ${book.color} 100%)`,
+          border: `3px solid var(--outline)`,
+          borderRadius: "8px",
+          boxShadow: isSelected
+            ? `3px 3px 0px var(--outline), 0 0 0 3px var(--gold), 0 0 20px rgba(245,196,24,0.4)`
+            : `4px 4px 0px var(--outline)`,
         }}
       >
-        {/* ── Spine highlight (left edge glint) ── */}
+        {/* Pattern overlay */}
+        <CoverPattern pattern={book.coverPattern} color={book.color} />
+
+        {/* Top band */}
         <div
-          className="absolute inset-y-0 left-0 w-1 pointer-events-none"
           style={{
-            background:
-              "linear-gradient(to bottom, rgba(255,255,255,0.15) 0%, rgba(255,255,255,0.04) 40%, transparent 100%)",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            height: 22,
+            background: `rgba(0,0,0,0.25)`,
+            borderBottom: `2px solid rgba(0,0,0,0.3)`,
           }}
         />
 
-        {/* ── Fabric / grain texture overlay ── */}
+        {/* Big emoji icon */}
         <div
-          className="absolute inset-0 pointer-events-none"
           style={{
-            backgroundImage: `
-              repeating-linear-gradient(
-                0deg,
-                transparent,
-                transparent 3px,
-                rgba(0,0,0,0.04) 3px,
-                rgba(0,0,0,0.04) 4px
-              )
-            `,
-            mixBlendMode: "multiply",
+            position: "absolute",
+            top: 28,
+            left: 0,
+            right: 0,
+            textAlign: "center",
+            fontSize: 30,
+            lineHeight: 1,
+            filter: "drop-shadow(0 2px 4px rgba(0,0,0,0.5))",
           }}
-        />
+        >
+          {book.coverEmoji}
+        </div>
 
-        {/* ── Top decorative band ── */}
+        {/* Title area */}
         <div
-          className="absolute top-0 left-0 right-0"
           style={{
-            height: "12px",
-            background: `linear-gradient(to bottom, rgba(0,0,0,0.3) 0%, transparent 100%)`,
-            borderBottom: `1px solid rgba(255,255,255,0.06)`,
+            position: "absolute",
+            bottom: 0,
+            left: 0,
+            right: 0,
+            padding: "4px 5px 5px",
+            background: `rgba(0,0,0,0.45)`,
+            borderTop: `2px solid rgba(0,0,0,0.3)`,
           }}
-        />
-
-        {/* ── Bottom decorative band ── */}
-        <div
-          className="absolute bottom-0 left-0 right-0"
-          style={{
-            height: "12px",
-            background: `linear-gradient(to top, rgba(0,0,0,0.35) 0%, transparent 100%)`,
-            borderTop: `1px solid rgba(255,255,255,0.04)`,
-          }}
-        />
-
-        {/* ── Vertical title text ── */}
-        {book.thickness >= 24 && (
-          <div
-            className="absolute inset-0 flex items-center justify-center pointer-events-none"
+        >
+          <p
             style={{
-              writingMode: "vertical-rl",
-              textOrientation: "mixed",
-              transform: "rotate(180deg)",
+              fontFamily: "var(--font-display)",
+              fontSize: 9,
+              color: book.accentColor,
+              lineHeight: 1.2,
+              textAlign: "center",
+              textShadow: "0 1px 3px rgba(0,0,0,0.8)",
+              overflow: "hidden",
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
             }}
           >
-            <span
-              className="font-playfair text-center leading-tight"
-              style={{
-                color: book.accentColor,
-                fontSize:
-                  book.thickness >= 36
-                    ? "11px"
-                    : book.thickness >= 28
-                    ? "9px"
-                    : "8px",
-                fontWeight: 500,
-                letterSpacing: "0.04em",
-                textShadow: `0 1px 3px rgba(0,0,0,0.7)`,
-                maxHeight: `${book.height - 30}px`,
-                overflow: "hidden",
-                opacity: 0.9,
-                whiteSpace: "nowrap",
-                textOverflow: "ellipsis",
-                paddingBottom: "4px",
-                paddingTop: "4px",
-              }}
-            >
-              {book.title}
-            </span>
+            {book.title}
+          </p>
+        </div>
+
+        {/* Owned badge */}
+        {isOwned && mode === "shop" && (
+          <div
+            style={{
+              position: "absolute",
+              top: 2,
+              right: 2,
+              background: "var(--green)",
+              border: "2px solid var(--outline)",
+              borderRadius: 4,
+              padding: "1px 4px",
+              fontSize: 7,
+              fontFamily: "var(--font-display)",
+              color: "#fff",
+              boxShadow: "1px 1px 0px var(--outline)",
+            }}
+          >
+            OWNED
           </div>
         )}
 
-        {/* ── Selected glow overlay ── */}
+        {/* Selected glow */}
         {isSelected && (
           <motion.div
-            className="absolute inset-0 pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             style={{
-              background: `radial-gradient(ellipse at 50% 30%, rgba(255,200,100,0.12) 0%, transparent 70%)`,
-              boxShadow: `inset 0 0 12px rgba(255,200,100,0.08)`,
+              position: "absolute",
+              inset: 0,
+              background: `radial-gradient(ellipse at 50% 30%, rgba(245,196,24,0.2) 0%, transparent 70%)`,
+              pointerEvents: "none",
             }}
           />
         )}
       </div>
 
-      {/* ── Top of book (pages edge) ── */}
+      {/* ── Price tag below card ── */}
       <div
-        className="absolute top-0 left-0 right-0 pointer-events-none"
         style={{
-          height: "4px",
-          background:
-            "linear-gradient(to bottom, rgba(240,230,210,0.5) 0%, rgba(200,185,160,0.2) 100%)",
-          borderRadius: "1px 2px 0 0",
-          transform: "perspective(60px) rotateX(30deg) translateY(-3px)",
-          transformOrigin: "bottom center",
+          marginTop: 4,
+          textAlign: "center",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 3,
         }}
-      />
+      >
+        <span
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: 11,
+            color: mode === "myshelf" && isOwned ? "#e05050" : "var(--gold)",
+            textShadow: "0 1px 3px rgba(0,0,0,0.9)",
+            background: "rgba(0,0,0,0.5)",
+            border: `2px solid ${mode === "myshelf" && isOwned ? "#e05050" : "var(--gold)"}`,
+            borderRadius: 5,
+            padding: "1px 5px",
+            display: "inline-block",
+          }}
+        >
+          {mode === "myshelf" && isOwned ? `↩ ${sellPrice}` : `🪙 ${displayPrice}`}
+        </span>
+      </div>
     </motion.div>
   );
 }
